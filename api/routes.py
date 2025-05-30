@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from api.logic.database import (
     start_cycle, get_today_workout, complete_today,
-    get_status, user_exists, is_completed
+    get_status, user_exists, is_completed,
+    add_calories, get_today_calories
 )
 
 router = APIRouter()
@@ -14,6 +15,11 @@ class StartCycleRequest(BaseModel):
 
 class UsernameRequest(BaseModel):
     username: str
+
+class CaloriesRequest(BaseModel):
+    username: str
+    product: str
+    kcal: int
 
 @router.get("/api/ping")
 def ping():
@@ -48,3 +54,16 @@ def check_completed(username: str):
     if not user_exists(username):
         raise HTTPException(status_code=404, detail="User not found")
     return {"completed": is_completed(username)}
+
+@router.post("/api/calories")
+def add_user_calories(data: CaloriesRequest):
+    if not user_exists(data.username):
+        raise HTTPException(status_code=404, detail="User not found")
+    add_calories(data.username, data.product, data.kcal)
+    return {"status": "added"}
+
+@router.get("/api/calories/today")
+def get_user_calories(username: str):
+    if not user_exists(username):
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_today_calories(username)
