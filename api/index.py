@@ -14,4 +14,4 @@ app.add_middleware(
 
 app.include_router(router)
 
-handler = app
+#handler = app
