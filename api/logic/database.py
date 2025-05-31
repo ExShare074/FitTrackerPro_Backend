@@ -1,5 +1,5 @@
 from typing import Dict, List
-from datetime import date
+from datetime import date, timedelta
 
 # Временное хранилище пользователей
 users: Dict[str, Dict] = {}
@@ -58,3 +58,20 @@ def get_today_calories(username: str):
         "kcal": sum(e["kcal"] for e in entries)
     }
     return {"total": total, "entries": entries}
+
+
+def get_week_calories(username: str):
+    user_data = users[username]["calories"]
+    week_data = []
+    for i in range(6, -1, -1):
+        day = str(date.today() - timedelta(days=i))
+        entries = user_data.get(day, [])
+        summary = {
+            "date": day,
+            "protein": sum(e["protein"] for e in entries),
+            "fat": sum(e["fat"] for e in entries),
+            "carbs": sum(e["carbs"] for e in entries),
+            "kcal": sum(e["kcal"] for e in entries)
+        }
+        week_data.append(summary)
+    return week_data
