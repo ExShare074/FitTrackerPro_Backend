@@ -9,7 +9,8 @@ def start_cycle(username: str, weeks: int, split: int):
     from api.logic.workout import WorkoutPlan
     users[username] = {
         "plan": WorkoutPlan(weeks, split),
-        "calories": {}
+        "calories": {},
+        "weight": {}
     }
 
 
@@ -60,11 +61,12 @@ def get_today_calories(username: str):
     return {"total": total, "entries": entries}
 
 
-def get_week_calories(username: str):
+def get_week_calories(username: str, offset: int = 0):
     user_data = users[username]["calories"]
     week_data = []
+    start_day = date.today() - timedelta(days=offset * 7)
     for i in range(6, -1, -1):
-        day = str(date.today() - timedelta(days=i))
+        day = str(start_day - timedelta(days=i))
         entries = user_data.get(day, [])
         summary = {
             "date": day,
