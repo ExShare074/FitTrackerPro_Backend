@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from api.logic.database import (
     start_cycle, get_today_workout, complete_today,
     get_status, user_exists, is_completed,
-    add_calories, get_today_calories
+    add_calories, get_today_calories, get_week_calories
 )
 
 router = APIRouter()
@@ -77,3 +77,9 @@ def get_user_calories(username: str):
     if not user_exists(username):
         raise HTTPException(status_code=404, detail="User not found")
     return get_today_calories(username)
+
+@router.get("/api/calories/week")
+def get_user_week_calories(username: str):
+    if not user_exists(username):
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_week_calories(username)
