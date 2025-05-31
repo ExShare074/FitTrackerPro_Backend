@@ -112,3 +112,9 @@ def get_weight(username: str):
     if not user_exists(username):
         raise HTTPException(status_code=404, detail="User not found")
     return get_weight_history(username)
+
+@router.get("/api/progress")
+def get_progress(username: str):
+    if not user_exists(username):
+        raise HTTPException(status_code=404, detail="User not found")
+    return users[username]["plan"].get_progress()
