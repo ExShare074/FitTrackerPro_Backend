@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from api.logic.database import (
     start_cycle, get_today_workout, complete_today,
@@ -79,7 +79,7 @@ def get_user_calories(username: str):
     return get_today_calories(username)
 
 @router.get("/api/calories/week")
-def get_user_week_calories(username: str):
+def get_user_week_calories(username: str, offset: int = Query(0)):
     if not user_exists(username):
         raise HTTPException(status_code=404, detail="User not found")
-    return get_week_calories(username)
+    return get_week_calories(username, offset)
