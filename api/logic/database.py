@@ -10,7 +10,7 @@ def start_cycle(username: str, weeks: int, split: int):
     users[username] = {
         "plan": WorkoutPlan(weeks, split),
         "calories": {},
-        "weight": {}
+        "weight": {},
     }
 
 
@@ -77,3 +77,14 @@ def get_week_calories(username: str, offset: int = 0):
         }
         week_data.append(summary)
     return week_data
+
+# ==== ВЕС ====
+
+def add_weight(username: str, kg: float):
+    today = str(date.today())
+    users[username]["weight"][today] = kg
+
+
+def get_weight_history(username: str):
+    data = users[username]["weight"]
+    return [{"date": d, "kg": data[d]} for d in sorted(data)]
