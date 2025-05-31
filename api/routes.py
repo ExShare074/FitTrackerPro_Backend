@@ -8,6 +8,8 @@ from api.logic.database import (
 
 router = APIRouter()
 
+feedback_storage = []
+
 class StartCycleRequest(BaseModel):
     username: str
     weeks: int
@@ -23,6 +25,10 @@ class CaloriesRequest(BaseModel):
     fat: int
     carbs: int
     kcal: int
+
+class FeedbackRequest(BaseModel):
+    username: str
+    message: str
 
 @router.get("/api/ping")
 def ping():
@@ -83,3 +89,8 @@ def get_user_week_calories(username: str, offset: int = Query(0)):
     if not user_exists(username):
         raise HTTPException(status_code=404, detail="User not found")
     return get_week_calories(username, offset)
+
+@router.post("/api/feedback")
+def submit_feedback(data: FeedbackRequest):
+    feedback_storage.append({"username": data.username, "message": data.message})
+    return {"status": "feedback received"}
