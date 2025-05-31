@@ -3,7 +3,8 @@ from pydantic import BaseModel
 from api.logic.database import (
     start_cycle, get_today_workout, complete_today,
     get_status, user_exists, is_completed,
-    add_calories, get_today_calories, get_week_calories
+    add_calories, get_today_calories, get_week_calories,
+    add_weight, get_weight_history
 )
 
 router = APIRouter()
@@ -29,6 +30,10 @@ class CaloriesRequest(BaseModel):
 class FeedbackRequest(BaseModel):
     username: str
     message: str
+
+class WeightRequest(BaseModel):
+    username: str
+    kg: float
 
 @router.get("/api/ping")
 def ping():
@@ -94,3 +99,16 @@ def get_user_week_calories(username: str, offset: int = Query(0)):
 def submit_feedback(data: FeedbackRequest):
     feedback_storage.append({"username": data.username, "message": data.message})
     return {"status": "feedback received"}
+
+@router.post("/api/weight")
+def save_weight(data: WeightRequest):
+    if not user_exists(data.username):
+        raise HTTPException(status_code=404, detail="User not found")
+    add_weight(data.username, data.kg)
+    return {"status": "weight saved"}
+
+@router.get("/api/weight")
+def get_weight(username: str):
+    if not user_exists(username):
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_weight_history(username)
