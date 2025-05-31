@@ -35,3 +35,10 @@ class WorkoutPlan:
             "day": self.current_day,
             "total_weeks": self.weeks
         }
+
+    def get_progress(self):
+        progress = []
+        for week in range(1, self.current_week + 1):
+            completed = self.split_days if week < self.current_week else self.current_day - 1
+            progress.append({"week": f"Неделя {week}", "completed": completed})
+        return progress
