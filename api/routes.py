@@ -19,6 +19,9 @@ class UsernameRequest(BaseModel):
 class CaloriesRequest(BaseModel):
     username: str
     product: str
+    protein: int
+    fat: int
+    carbs: int
     kcal: int
 
 @router.get("/api/ping")
@@ -59,7 +62,14 @@ def check_completed(username: str):
 def add_user_calories(data: CaloriesRequest):
     if not user_exists(data.username):
         raise HTTPException(status_code=404, detail="User not found")
-    add_calories(data.username, data.product, data.kcal)
+    add_calories(
+        data.username,
+        data.product,
+        data.protein,
+        data.fat,
+        data.carbs,
+        data.kcal
+    )
     return {"status": "added"}
 
 @router.get("/api/calories/today")
